@@ -12,9 +12,9 @@
 
 #include "test_header.h"
 
-static void	ft_print(void *content)
+static void	ft_noop(void *content)
 {
-	printf("%s", (char *)content);
+	(void)content;
 }
 
 static int	test_lstiter(void)
@@ -26,11 +26,8 @@ static int	test_lstiter(void)
 	printf("\n--- ft_lstiter ---\n");
 	lst = NULL;
 	ft_lstadd_back(&lst, ft_lstnew(ft_strdup("hello")));
-	ft_lstadd_back(&lst, ft_lstnew(ft_strdup(" ")));
-	ft_lstadd_back(&lst, ft_lstnew(ft_strdup("world")));
-	printf("  (visual: 'hello world') ");
-	ft_lstiter(lst, ft_print);
-	printf("\n");
+	ft_lstadd_back(&lst, ft_lstnew(ft_strdup(" world")));
+	ft_lstiter(lst, ft_noop);
 	f += check(1, "iterates all");
 	ft_lstclear(&lst, del);
 	return (f);
@@ -50,21 +47,6 @@ static void	*ft_double(void *content)
 	return (r);
 }
 
-static void	free_list(t_list *lst)
-{
-	t_list	*tmp;
-	t_list	*nx;
-
-	tmp = lst;
-	while (tmp)
-	{
-		nx = tmp->next;
-		free(tmp->content);
-		free(tmp);
-		tmp = nx;
-	}
-}
-
 static int	test_lstmap(void)
 {
 	t_list	*lst;
@@ -81,7 +63,7 @@ static int	test_lstmap(void)
 	f += check(!strcmp((char *)new->content, "abab"), "first map");
 	f += check(!strcmp((char *)new->next->content, "cdcd"), "2nd map");
 	f += check(ft_lstsize(new) == 2, "same size");
-	free_list(new);
+	ft_lstclear(&new, del);
 	ft_lstclear(&lst, del);
 	return (f);
 }

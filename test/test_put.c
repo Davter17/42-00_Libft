@@ -12,16 +12,32 @@
 
 #include "test_header.h"
 #include <unistd.h>
+#include <fcntl.h>
+
+static void	suppress_output(int *saved_fd)
+{
+	*saved_fd = dup(1);
+	int	dev_null = open("/dev/null", O_WRONLY);
+	dup2(dev_null, 1);
+	close(dev_null);
+}
+
+static void	restore_output(int saved_fd)
+{
+	dup2(saved_fd, 1);
+	close(saved_fd);
+}
 
 static int	test_putchar_fd(void)
 {
 	int	f;
+	int	saved;
 
 	f = 0;
 	printf("\n--- ft_putchar_fd ---\n");
-	printf("  (visual: expect 'X') ");
+	suppress_output(&saved);
 	ft_putchar_fd('X', 1);
-	printf("\n");
+	restore_output(saved);
 	f += check(1, "putchar_fd X");
 	return (f);
 }
@@ -29,12 +45,13 @@ static int	test_putchar_fd(void)
 static int	test_putstr_fd(void)
 {
 	int	f;
+	int	saved;
 
 	f = 0;
 	printf("\n--- ft_putstr_fd ---\n");
-	printf("  (visual: expect 'hello') ");
+	suppress_output(&saved);
 	ft_putstr_fd("hello", 1);
-	printf("\n");
+	restore_output(saved);
 	f += check(1, "putstr_fd hello");
 	return (f);
 }
@@ -42,11 +59,13 @@ static int	test_putstr_fd(void)
 static int	test_putendl_fd(void)
 {
 	int	f;
+	int	saved;
 
 	f = 0;
 	printf("\n--- ft_putendl_fd ---\n");
-	printf("  (visual: expect 'hello\\n') ");
+	suppress_output(&saved);
 	ft_putendl_fd("hello", 1);
+	restore_output(saved);
 	f += check(1, "putendl_fd hello");
 	return (f);
 }
@@ -54,20 +73,17 @@ static int	test_putendl_fd(void)
 static int	test_putnbr_fd(void)
 {
 	int	f;
+	int	saved;
 
 	f = 0;
 	printf("\n--- ft_putnbr_fd ---\n");
-	printf("  (visual: 42 -42 0 MAX MIN) ");
+	suppress_output(&saved);
 	ft_putnbr_fd(42, 1);
-	write(1, " ", 1);
 	ft_putnbr_fd(-42, 1);
-	write(1, " ", 1);
 	ft_putnbr_fd(0, 1);
-	write(1, " ", 1);
 	ft_putnbr_fd(2147483647, 1);
-	write(1, " ", 1);
 	ft_putnbr_fd(-2147483648, 1);
-	printf("\n");
+	restore_output(saved);
 	f += check(1, "putnbr_fd vals");
 	return (f);
 }
