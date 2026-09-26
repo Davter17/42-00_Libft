@@ -1,0 +1,14 @@
+.obj/
+test/test_is
+test/test_mem
+test/test_mem2
+test/test_str
+test/test_str2
+test/test_str3
+test/test_str4
+test/test_conv
+test/test_put
+test/test_lst1
+test/test_lst2
+test/test_lst3
+libft.a
