@@ -41,23 +41,27 @@ AR = ar rcs
 all: $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRCS_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+	@printf "  \033[33m⚙\033[0m  Compiling %d files...\n" $(words $(OBJS))
+	@mkdir -p $(OBJ_DIR)
 
 $(NAME): $(OBJS)
-	$(AR) $(NAME) $(OBJS)
+	@printf "  \033[32m✓\033[0m Compiled %d files → $(NAME)\n" $(words $(OBJS))
+	@$(AR) $(NAME) $(OBJS)
 
 clean:
-	rm -rf $(OBJ_DIR)
+	@printf "  \033[31m✗\033[0m  Removing object files...\n"
+	@rm -rf $(OBJ_DIR)
 
 fclean: clean
-	rm -f $(NAME)
+	@printf "  \033[31m✗\033[0m  Removing $(NAME)...\n"
+	@rm -f $(NAME)
 
 re: fclean all
 
 test: all
-	bash test/run_tests.sh
+	@bash test/run_tests.sh
 
 .PHONY: all clean fclean re test
